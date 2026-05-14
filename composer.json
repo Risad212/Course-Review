@@ -1,0 +1,8 @@
+{
+    "name": "risad/course-review",
+    "autoload": {
+        "psr-4": {
+            "CourseReview\\": "inc/"
+        }
+    }
+}

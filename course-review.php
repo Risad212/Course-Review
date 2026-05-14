@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name: Course Review
  * Plugin URI: 
@@ -21,9 +22,13 @@ if (!defined('ABSPATH')) exit;
 // point to root folder of plugin where anywhere
 const COURSE_REVIEW_FILE = __FILE__;
 
-function course_review_preload() {
-	// Set Base name plugin plugin folder and main file
-	define( 'COURSE_REVIEW_BASENAME', plugin_basename( __FILE__ ) );
+require __DIR__ . '/vendor/autoload.php';
+
+
+function course_review_preload()
+{
+    // Set Base name plugin plugin folder and main file
+    define('COURSE_REVIEW_BASENAME', plugin_basename(__FILE__));
 
     include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
@@ -40,7 +45,7 @@ function course_review_preload() {
     define('COURSE_REVIEW_REQUIRE_VER', $addon_info['Require_LP_Version']);
 
     // Check LearnPress Activated
-    if ( ! is_plugin_active('learnpress/learnpress.php') ) {
+    if (! is_plugin_active('learnpress/learnpress.php')) {
 
         add_action('admin_notices', function () use ($addon_info) {
             echo '<div class="notice notice-error"><p>';
