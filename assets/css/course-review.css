@@ -1,0 +1,374 @@
+
+/* =========================
+   BUTTON
+========================= */
+.write-review {
+    margin-bottom: 15px;
+}
+
+.review-button.lp-button {
+    padding: 10px 18px;
+    border: none;
+    background: #ffb60a;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* =========================
+   OVERLAY
+========================= */
+.course-review-wrapper {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 999999;
+    justify-content: center;
+    align-items: center;
+}
+
+/* OPEN STATE */
+.course-review-wrapper.active {
+    display: flex;
+}
+
+/* =========================
+   MODAL BOX
+========================= */
+.review-form {
+    background: #fff;
+    width: 100%;
+    max-width: 520px;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* =========================
+   HEADER
+========================= */
+.review-form h4 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 0 15px;
+    font-size: 18px;
+}
+
+.review-form .close {
+    text-decoration: none;
+    font-size: 22px;
+    color: #333;
+}
+
+/* =========================
+   FIELDS
+========================= */
+.review-fields {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.review-fields li {
+    margin-bottom: 15px;
+}
+
+.review-fields label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.review-fields input,
+.review-fields textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    outline: none;
+}
+
+.review-fields textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* =========================
+   STARS
+========================= */
+.review-stars {
+    display: flex;
+    gap: 6px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.review-stars li {
+    cursor: pointer;
+    font-size: 20px;
+    color: #ddd;
+    transition: 0.2s;
+}
+
+.review-stars li:hover,
+.review-stars li.active {
+    color: #ffb60a;
+}
+
+/* ===============================
+   Course Review List (Clean UI)
+   Prefix: course-review
+================================= */
+
+.course-review-list {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+}
+
+/* Single review item */
+.course-review-item {
+    margin-bottom: 20px;
+    padding: 20px;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* Avatar */
+.course-review-author {
+    width: 100px;
+    flex-shrink: 0;
+}
+
+.course-review-author img {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+}
+
+/* Right content wrapper */
+.course-review-content {
+    flex: 1;
+}
+
+/* Top info row */
+.course-review-info {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+    align-items: center;
+}
+
+/* Name + rating wrapper */
+.course-review-author-rated {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+/* Username */
+.course-review-user-name {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+/* Date */
+.course-review-date {
+    font-size: 13px;
+    color: #777;
+}
+
+/* Title */
+.course-review-title {
+    margin: 0 0 8px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* Content */
+.course-review-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+}
+
+/* Stars wrapper (you can hook your existing star HTML here) */
+.course-review-stars {
+    display: flex;
+    gap: 3px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .course-review-item {
+        flex-direction: column;
+    }
+
+    .course-review-author {
+        width: 80px;
+    }
+}
+
+/* ==============================
+   COURSE REVIEW RATING SYSTEM
+============================== */
+
+/* =========================
+   COURSE REVIEW RATING UI
+========================= */
+
+.course-rate {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin: 20px 0;
+    width: 100%;
+    align-items: flex-start;
+}
+
+/* =========================
+   SUMMARY SECTION
+========================= */
+
+.course-rate__summary {
+    flex: 0 0 220px;
+    text-align: center;
+}
+
+.course-rate__summary-value {
+    font-size: 92px;
+    font-weight: 500;
+    line-height: 1;
+    color: #222;
+    margin-bottom: 10px;
+}
+
+.course-rate__summary-stars {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.review-stars-rated {
+    display: flex;
+    gap: 4px;
+}
+
+.review-star {
+    font-size: 20px;
+    color: #f59e0b;
+    line-height: 1;
+}
+
+/* empty stars */
+.review-star:empty,
+.review-star:not(:contains("â˜…")) {
+    color: #ddd;
+}
+
+/* fallback safer approach */
+.review-stars-rated .review-star {
+    color: #f59e0b;
+}
+
+/* =========================
+   TEXT
+========================= */
+
+.course-rate__summary-text {
+    font-size: 14px;
+    color: #777;
+}
+
+.course-rate__summary-text span {
+    font-weight: 600;
+    color: #333;
+}
+
+/* =========================
+   DETAILS SECTION
+========================= */
+
+.course-rate__details {
+    flex: 1;
+    min-width: 250px;
+}
+
+/* row */
+.course-rate__details-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+/* star label (5,4,3...) */
+.course-rate__details-row-star {
+    width: 40px;
+    text-align: right;
+    font-size: 14px;
+    color: #999;
+}
+
+/* bar wrapper */
+.course-rate__details-row-value {
+    flex: 1;
+    position: relative;
+    height: 10px;
+}
+
+/* background bar */
+.rating-gray {
+    position: absolute;
+    width: 100%;
+    height: 10px;
+    background: #eee;
+    border-radius: 4px;
+}
+
+/* active bar */
+.rating {
+    position: absolute;
+    height: 10px;
+    background: #f59e0b;
+    border-radius: 4px;
+    left: 0;
+    top: 0;
+}
+
+/* count */
+.rating-count {
+    width: 40px;
+    text-align: right;
+    font-size: 13px;
+    color: #333;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+    .course-rate {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .course-rate__summary {
+        flex: 1;
+    }
+
+    .course-rate__details-row-star {
+        width: 30px;
+    }
+}
