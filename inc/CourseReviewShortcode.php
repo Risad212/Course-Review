@@ -1,5 +1,7 @@
 <?php
 
+namespace LearnPress\CourseRevie\CourseReviewShortCode;
+
 use LearnPress\Shortcodes\AbstractShortcode;
 use LearnPress\Helpers\Singleton;
 use LearnPress\Models\CourseModel;
