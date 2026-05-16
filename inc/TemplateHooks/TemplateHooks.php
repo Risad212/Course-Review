@@ -148,7 +148,7 @@ class TemplateHooks
 		$course_id     = $courseModel->get_id();
 		$courseRatings = count_rating_of_course($course_id);
 
-		$averageStars  = round($this->average_calculation_rating($courseRatings), 1);
+		$averageStars  = number_format($this->average_calculation_rating($courseRatings), 1);
 		$total_reviews = $courseRatings->total;
 
 		$html = '<div class="course-rate">';
