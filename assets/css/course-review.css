@@ -272,7 +272,7 @@
 
 /* empty stars */
 .review-star:empty,
-.review-star:not(:contains("â˜…")) {
+.review-star:not(:contains("Ã¢Ëœâ€¦")) {
     color: #ddd;
 }
 
@@ -299,61 +299,69 @@
    DETAILS SECTION
 ========================= */
 
-.course-rate__details {
-    flex: 1;
-    min-width: 250px;
+.course-rate__details{
+	flex: 1;
+	min-width: 237px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
 }
 
-/* row */
-.course-rate__details-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
+/* rating row */
+.course-rate__details-row{
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
-/* star label (5,4,3...) */
-.course-rate__details-row-star {
-    width: 40px;
-    text-align: right;
-    font-size: 14px;
-    color: #999;
+/* star number */
+.course-rate__details-row-star{
+	width: 13px;
+	font-size: 17px;
+	color: #666;
 }
 
-/* bar wrapper */
-.course-rate__details-row-value {
-    flex: 1;
-    position: relative;
-    height: 10px;
+/* star icon */
+.course-rate__details-row-icon{
+	color: #f59e0b;
+	font-size: 17px;
 }
 
-/* background bar */
-.rating-gray {
-    position: absolute;
-    width: 100%;
-    height: 10px;
-    background: #eee;
-    border-radius: 4px;
+/* progress wrapper */
+.course-rate__details-row-value{
+	position: relative;
+	flex: 1;
+	height: 11px;
+	border-radius: 999px;
+	overflow: hidden;
 }
 
-/* active bar */
-.rating {
-    position: absolute;
-    height: 10px;
-    background: #f59e0b;
-    border-radius: 4px;
-    left: 0;
-    top: 0;
+/* gray background */
+.rating-gray{
+	position: absolute;
+	inset: 0;
+	background: #e5e7eb;
+	border-radius: 999px;
 }
 
-/* count */
-.rating-count {
-    width: 40px;
-    text-align: right;
-    font-size: 13px;
-    color: #333;
+/* active progress */
+.rating{
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+	background: #f59e0b;
+	border-radius: 999px;
+	/* height: 6px; */
 }
 
+/* review count */
+.rating-count{
+	width: 17px;
+	text-align: right;
+	font-size: 16px;
+	color: #666;
+}
 /* =========================
    RESPONSIVE
 ========================= */
