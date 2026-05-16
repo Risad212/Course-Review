@@ -3,24 +3,21 @@
 use LearnPress\Models\CourseModel;
 use LearnPress\Models\UserItems\UserCourseModel;
 use LearnPress\Models\UserModel;
+use LearnPress\CourseReview\CourseReviewWidget;
 
 defined('ABSPATH') || exit;
 
-
 class Course_Review_Addon extends LP_Addon
 {
-
 	public static $instance = null;
 
-	// meta key enable constant
 	const META_KEY_ENABLE = '_lp_course_review_enable';
 
 	/**
-	 * Get instance (Singleton)
+	 * Get single instance (Singleton pattern)
 	 */
 	public static function instance()
 	{
-
 		if (is_null(self::$instance)) {
 			self::$instance = new self();
 		}
@@ -29,7 +26,7 @@ class Course_Review_Addon extends LP_Addon
 	}
 
 	/**
-	 * Constructor
+	 * Constructor - initialize hooks
 	 */
 	public function __construct()
 	{
@@ -38,11 +35,10 @@ class Course_Review_Addon extends LP_Addon
 	}
 
 	/**
-	 * Define constants
+	 * Define plugin constants (path & URL)
 	 */
 	public function _define_constants()
 	{
-
 		if (! defined('COURSE_REVIEW_PATH')) {
 			define('COURSE_REVIEW_PATH', dirname(COURSE_REVIEW_FILE));
 		}
@@ -56,7 +52,7 @@ class Course_Review_Addon extends LP_Addon
 	}
 
 	/**
-	 * Includes
+	 * Include required files
 	 */
 	public function _includes()
 	{
@@ -65,236 +61,139 @@ class Course_Review_Addon extends LP_Addon
 	}
 
 	/**
-	 * Assets
+	 * Load CSS & JS assets
 	 */
 	public function enqueue_assets()
 	{
+		wp_enqueue_style('toastify-css', COURSE_REVIEW_URL . '/assets/css/toastify.min.css', [], '1.12.0');
+		wp_enqueue_style('course-review-style', COURSE_REVIEW_URL . '/assets/css/course-review.css', [], '1.0.0');
 
-		wp_enqueue_style(
-			'toastify-css',
-			COURSE_REVIEW_URL . '/assets/css/toastify.min.css',
-			[],
-			'1.12.0'
-		);
+		wp_enqueue_script('toastify-script', COURSE_REVIEW_URL . '/assets/js/toastify.min.js', ['jquery'], '1.12.0', true);
+		wp_enqueue_script('course-review-script', COURSE_REVIEW_URL . '/assets/js/course-review.js', ['jquery'], '1.0.0', true);
 
-		wp_enqueue_style(
-			'course-review-style',
-			COURSE_REVIEW_URL . '/assets/css/course-review.css',
-			[],
-			'1.0.0'
-		);
-
-		wp_enqueue_script(
-			'toastify-script',
-			COURSE_REVIEW_URL . '/assets/js/toastify.min.js',
-			['jquery'],
-			'1.12.0',
-			true
-		);
-
-		wp_enqueue_script(
-			'course-review-script',
-			COURSE_REVIEW_URL . '/assets/js/course-review.js',
-			['jquery'],
-			'1.0.0',
-			true
-		);
-
-		wp_localize_script(
-			'course-review-script',
-			'lp_ajax',
-			[
-				'url' => admin_url('admin-ajax.php'),
-			]
-		);
+		wp_localize_script('course-review-script', 'lp_ajax', [
+			'url' => admin_url('admin-ajax.php'),
+		]);
 	}
 
 	/**
-	 * inialize Hooks
+	 * Register hooks, filters, AJAX, widgets
 	 */
 	public function initHook()
 	{
-
-		// Asset loading
 		add_action('wp_enqueue_scripts', [$this, 'enqueue_assets']);
 
-		// AJAX hooks
 		add_action('wp_ajax_lp_save_review', [$this, 'lp_save_review']);
 		add_action('wp_ajax_nopriv_lp_save_review', [$this, 'lp_save_review']);
 
-		// Show rating in admin comment
-		add_filter(
-			'comment_text',
-			[$this, 'add_rating_to_admin_comment'],
-			10,
-			2
-		);
+		add_filter('comment_text', [$this, 'add_rating_to_admin_comment'], 10, 2);
 
-		// Show menu link in LearnPress admin menu
-		add_action(
-			'admin_menu',
-			function () {
+		add_action('admin_menu', function () {
+			add_submenu_page(
+				'learn_press',
+				__('Course Reviews', 'course-review'),
+				__('Course Reviews', 'course-review'),
+				'manage_options',
+				home_url('/wp-admin/edit-comments.php?comment_type=review')
+			);
+		});
 
-				add_submenu_page(
-					'learn_press',
-					__('Course Reviews', 'course-review'),
-					__('Course Reviews', 'course-review'),
-					'manage_options',
-					home_url('/wp-admin/edit-comments.php?comment_type=review')
-				);
-			}
-		);
+		/**
+		 * Register LearnPress review widget
+		 */
+		add_action('learn-press/widgets/register', function ($widgets) {
+			$widgets[] = CourseReviewWidget::instance();
+			return $widgets;
+		});
 
-		// temporary include CourseReviewWidget.php file
-		include_once COURSE_REVIEW_PATH . '/inc/CourseReviewWidget.php';
+		/**
+		 * Add "Enable Reviews" field in course settings
+		 */
+		add_filter('lp/course/meta-box/fields/general', function ($fields, $post_id) {
 
-		// Widget register
-		add_action(
-			'learn-press/widgets/register',
-			function ($widgets) {
-				$widgets[] = CourseReviewWidget::instance();
-				return $widgets;
-			}
-		);
+			$fields[self::META_KEY_ENABLE] = new LP_Meta_Box_Checkbox_Field(
+				__('Enable reviews', 'course-review'),
+				__('Show reviews for this course', 'course-review'),
+				'yes'
+			);
 
-		// Add setting field to every course.
-		add_filter(
-			'lp/course/meta-box/fields/general',
-			function ($fields, $post_id) {
-				$fields[self::META_KEY_ENABLE] = new LP_Meta_Box_Checkbox_Field(
-					__('Enable reviews', 'course-review'),
-					__('Show reviews for this course', 'course-review'),
-					'yes'
-				);
+			return $fields;
 
-				return $fields;
-			},
-			10,
-			2
-		);
+		}, 10, 2);
 	}
 
 	/**
-	 * AJAX Review Save In Comment
+	 * Save review via AJAX
 	 */
 	public function lp_save_review()
 	{
+		$post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+		$rating  = isset($_POST['rating']) ? intval($_POST['rating']) : 0;
+		$title   = isset($_POST['title']) ? sanitize_text_field($_POST['title']) : '';
+		$content = isset($_POST['content']) ? sanitize_textarea_field($_POST['content']) : '';
 
-		$post_id = isset($_POST['post_id'])
-			? intval($_POST['post_id'])
-			: 0;
-
-		$rating = isset($_POST['rating'])
-			? intval($_POST['rating'])
-			: 0;
-
-		$title = isset($_POST['title'])
-			? sanitize_text_field($_POST['title'])
-			: '';
-
-		$content = isset($_POST['content'])
-			? sanitize_textarea_field($_POST['content'])
-			: '';
-
-		// Validation
 		if (! $post_id) {
-
-			wp_send_json_error(
-				[
-					'message' => __('Missing post ID', 'course-review'),
-				]
-			);
+			wp_send_json_error(['message' => __('Missing post ID', 'course-review')]);
 		}
 
 		if (! $rating) {
-
-			wp_send_json_error(
-				[
-					'message' => __('Please select rating', 'course-review'),
-				]
-			);
+			wp_send_json_error(['message' => __('Please select rating', 'course-review')]);
 		}
 
 		if (empty($title)) {
-
-			wp_send_json_error(
-				[
-					'message' => __('Title is required', 'course-review'),
-				]
-			);
+			wp_send_json_error(['message' => __('Title is required', 'course-review')]);
 		}
 
 		if (empty($content)) {
-
-			wp_send_json_error(
-				[
-					'message' => __('Content is required', 'course-review'),
-				]
-			);
+			wp_send_json_error(['message' => __('Content is required', 'course-review')]);
 		}
 
-		// Insert comment
-		$comment_id = wp_insert_comment(
-			[
-				'comment_post_ID' => $post_id,
-				'comment_content' => $content,
-				'comment_type'    => 'review',
-				'comment_approved' => 1,
-				'user_id'         => get_current_user_id(),
-			]
-		);
+		$comment_id = wp_insert_comment([
+			'comment_post_ID' => $post_id,
+			'comment_content' => $content,
+			'comment_type'    => 'review',
+			'comment_approved'=> 1,
+			'user_id'         => get_current_user_id(),
+		]);
 
-		// Meta
 		update_comment_meta($comment_id, '_lpr_rating', $rating);
 		update_comment_meta($comment_id, '_lpr_review_title', $title);
 
-		wp_send_json_success(
-			[
-				'message'    => __('Review saved and awaiting approval', 'course-review'),
-				'comment_id' => $comment_id,
-			]
-		);
+		wp_send_json_success([
+			'message'    => __('Review saved and awaiting approval', 'course-review'),
+			'comment_id' => $comment_id,
+		]);
 	}
 
 	/**
-	 * Show rating in admin comments
+	 * Add star rating in admin comment list
 	 */
 	public function add_rating_to_admin_comment($comment_text, $comment)
 	{
-
 		if (is_admin() && $comment->comment_type === 'review') {
 
-			$rating = get_comment_meta(
-				$comment->comment_ID,
-				'_lpr_rating',
-				true
-			);
+			$rating = get_comment_meta($comment->comment_ID, '_lpr_rating', true);
 
-			if (! $rating) {
-				return $comment_text;
-			}
+			if (! $rating) return $comment_text;
 
-			$stars = '<div class="lp-admin-stars" style="display:flex; gap:2px;">';
+			$stars = '<div style="display:flex; gap:2px;">';
 
-			for ($i = 1; $i <= 5; $i++) {
+				for ($i = 1; $i <= 5; $i++) {
 
-				$color = ($i <= $rating) ? '#f59e0b' : '#fff';
+					$filled = ($i <= $rating);
 
-				$stars .= '
-				<svg
-					width="20"
-					height="20"
-					viewBox="0 0 24 24"
-					fill="' . esc_attr($color) . '"
-					stroke="#f59e0b"
-					stroke-width="1.5"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-				</svg>';
-			}
+					$stars .= '<div class="star">';
 
-			$stars .= '</div>';
+					$stars .= '<svg width="18" height="18" viewBox="0 0 24 24" 
+						fill="' . ($filled ? '#f59e0b' : '#fff') . '" 
+						stroke="#f59e0b" stroke-width="1.5">
+						<polygon points="12 2 15 8 22 9 17 14 18 21 12 18 6 21 7 14 2 9 9 8"/>
+					</svg>';
+
+					$stars .= '</div>';
+				}
+
+				$stars .= '</div>';
 
 			$comment_text .= $stars;
 		}
@@ -303,26 +202,26 @@ class Course_Review_Addon extends LP_Addon
 	}
 
 	/**
-	 * Check user can review course.
+	 * Check if user can review a course
 	 */
 	public function check_user_can_review_course(UserModel $user, CourseModel $course): bool
 	{
-		$can_review = false;
-
 		$userCourse = UserCourseModel::find($user->get_id(), $course->get_id(), true);
+
 		if (
 			$userCourse &&
-			($userCourse->has_enrolled_or_finished() || ($course->is_offline() && $userCourse->has_purchased()))
-			&& ! learn_press_get_user_rate($course->get_id(), $user->get_id())
+			($userCourse->has_enrolled_or_finished() ||
+			($course->is_offline() && $userCourse->has_purchased())) &&
+			! learn_press_get_user_rate($course->get_id(), $user->get_id())
 		) {
-			$can_review = true;
+			return true;
 		}
 
-		return $can_review;
+		return false;
 	}
 
 	/**
-	 * Check Course Review Enable
+	 * Check if reviews are enabled for course
 	 */
 	public function is_enable(CourseModel $course): bool
 	{
