@@ -1,6 +1,6 @@
 <?php
 
-namespace LearnPress\CourseRevie\CourseReviewShortCode;
+namespace LearnPress\CourseReview;
 
 use LearnPress\Shortcodes\AbstractShortcode;
 use LearnPress\Helpers\Singleton;
