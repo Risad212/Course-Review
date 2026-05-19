@@ -2,9 +2,6 @@
 
 /**
  * Get all approved course reviews.
- *
- * @param int $course_id
- * @return array
  */
 if ( ! function_exists( 'learn_press_get_course_review' ) ) {
 
@@ -20,17 +17,12 @@ if ( ! function_exists( 'learn_press_get_course_review' ) ) {
 	}
 }
 
-
 /**
  * Count course ratings.
- *
- * @param int $course_id
- * @return object
  */
 if ( ! function_exists( 'count_rating_of_course' ) ) {
 
 	function count_rating_of_course( $course_id = 0 ) {
-
 		global $wpdb;
 
 		$query = $wpdb->prepare(
