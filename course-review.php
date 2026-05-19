@@ -113,3 +113,4 @@ final class Course_Review_Preload
  * Start plugin
  */
 Course_Review_Preload::instance();
+
